@@ -1,45 +1,66 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Connection } from "..";
+import { StateCreator } from "zustand";
 
-export const connectionsSlice = createSlice({
-    name: "connections",
-    initialState: {
-        websocket: { name: "Backend WebSocket", isConnected: false },
-        boards: [] as Connection[],
-    },
-    reducers: {
-        setWebSocketConnection: (
-            connections,
-            action: PayloadAction<boolean>
-        ) => {
-            connections.websocket.isConnected = action.payload;
+interface ConnectionsSlice {
+    websocket: Connection;
+    boards: Connection[];
+    setWebSocketConnection: (isConnected: boolean) => void;
+    setBoardConnections: (connections: Array<Connection>) => void;
+}
 
-            if (!action.payload) {
-                connections.boards.forEach((board) => {
-                    board.isConnected = false;
-                });
-            }
-        },
+const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
+    websocket: { name: "Backend WebSocket", isConnected: false },
+    boards: [] as Connection[],
 
-        updateBoardConnections: (
-            connections,
-            action: PayloadAction<Array<Connection>>
-        ) => {
-            for (const update of action.payload) {
-                const connIndex = connections.boards.findIndex(
-                    (conn) => conn.name == update.name
-                );
-
-                if (connIndex != -1) {
-                    connections.boards[connIndex].isConnected =
-                        update.isConnected;
-                } else {
-                    connections.boards.push({
-                        name: update.name,
-                        isConnected: update.isConnected,
-                    });
+    /**
+     * Reducer that sets the state of the connection to isConnected param.
+     * @param {boolean} isConnected
+     */
+    setWebSocketConnection: (isConnected: boolean) => {
+        if(!isConnected) {
+            set(state => ({
+                websocket: {
+                    ...state.websocket,
+                    isConnected: false
+                },
+                boards: state.boards.map(board => ({
+                    ...board,
+                    isConnected: false
+                }))
+            }))
+        } else {
+            set(state => ({
+                websocket: {
+                    ...state.websocket,
+                    isConnected: true
                 }
-            }
-        },
+            }))
+        }
     },
-});
+
+    /**
+     * Reducer that sets the boards in the state to connections param.
+     * Check if each connection already exists in boards. If so, update them.
+     * If one doesn't exist, push it to boards.
+     * @param {Array<Connection>} connections 
+     */
+    setBoardConnections: (connections: Array<Connection>) => { 
+        let finalBoards = [] as Connection[]
+        let stateBoards = get().boards;
+        connections.forEach(connection => {
+            const result = stateBoards.find(board => board.name == connection.name) //TODO: CHECK IF IT WORKS WITH FIND
+            if(result) {
+                finalBoards.push({
+                    ...result,
+                    isConnected: connection.isConnected
+                })
+            } else {
+                finalBoards.push(connection)
+            }
+        })
+        set(state => ({
+            ...state,
+            boards: finalBoards
+        }))
+    }
+})
