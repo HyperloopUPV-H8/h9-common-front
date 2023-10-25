@@ -8,13 +8,14 @@ import {
     PodDataAdapter,
     PacketUpdate,
 } from "../adapters";
+import { StateCreator } from "zustand";
 
 export type Measurements = {
     measurements: Record<string, Measurement>;
     packetIdToBoard: Record<number, string>;
 };
 
-export const measurementsSlice = createSlice({
+export const measurementsSliceRedux = createSlice({
     name: "measurements",
     initialState: { measurements: {}, packetIdToBoard: {} } as Measurements,
     reducers: {
@@ -50,6 +51,68 @@ export const measurementsSlice = createSlice({
         },
     },
 });
+
+interface MeasurementsSlice {
+    measurements: Record<string, Measurement>;
+    packetIdToBoard: Record<number, string>;
+    initMeasurements: (podDataAdapter: PodDataAdapter) => Measurements;
+    updateMeasurements: (measurements: Record<string, PacketUpdate>) => void
+}
+
+const measurementsSlice: StateCreator<MeasurementsSlice> = (set, get) => ({
+    measurements: {},
+    packetIdToBoard: {},
+
+    /**
+     * Reducer that receives a PodDataAdapter and initializes the measurements
+     * and packetIdToBoard map in state.
+     * @param {PodDataAdapter} podDataAdapter 
+     * @returns {Measurements}
+     */
+    initMeasurements: (podDataAdapter: PodDataAdapter) => {
+
+        const measurements: Measurements = {
+            measurements: createMeasurementsFromPodDataAdapter(podDataAdapter),
+            packetIdToBoard: getPacketIdToBoard(podDataAdapter),
+        }
+
+        set(state => ({
+            ...state,
+            ...measurements
+        }))
+
+        return measurements
+    },
+
+    /**
+     * Reducer that updates the measurements in the state.
+     * It receives a measurements map with PacketUpdates, extract the measurements
+     * from each of them and updates the measurements.
+     * @param {Record<string, PacketUpdate>} measurements 
+     */
+    updateMeasurements: (measurements: Record<string, PacketUpdate>) => {
+        for(const update of Object.values(measurements)) {
+            for (const [id, mUpdate] of Object.entries(update.measurementUpdates)) {
+                const boardName = get().packetIdToBoard[update.id];
+                if (!boardName) {
+                    continue;
+                }
+
+                const measurementId = `${boardName}/${id}`;
+                set(state => ({
+                    ...state,
+                    measurements: {
+                        ...measurements,
+                        [measurementId]: {
+                            ...state.measurements[measurementId],
+                            value: mUpdate
+                        }
+                    }
+                } as MeasurementsSlice))
+            }
+        }
+    }
+})
 
 function createMeasurementsFromPodDataAdapter(
     podDataAdapter: PodDataAdapter
