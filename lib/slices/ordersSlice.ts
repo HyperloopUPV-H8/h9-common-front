@@ -10,6 +10,10 @@ interface OrdersSlice {
 export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
     vehicleOrders: { boards: [] },
 
+    /**
+     * Reducer that sets the vehicleOrders to the vehicleOrders param
+     * @param {VehicleOrders} vehicleOrders
+     */
     setOrders: (vehicleOrders: VehicleOrders) => {
         set(state => ({
             ...state,
@@ -17,6 +21,12 @@ export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
         }))
     },
 
+    /**
+     * Reducer that updates orders to stateOrdersUpdate param.
+     * It checks if the board vinculated with each order of stateOrdersUpdate exists.
+     * If so, it is updated. If not exists, it ignores that order.
+     * @param {StateOrdersUpdate} stateOrdersUpdate 
+     */
     updateStateOrders: (stateOrdersUpdate: StateOrdersUpdate) => {
         Object.entries(stateOrdersUpdate).forEach(([name, ids]) => {
             const index = get().vehicleOrders.boards.findIndex( (board) => board.name == name );

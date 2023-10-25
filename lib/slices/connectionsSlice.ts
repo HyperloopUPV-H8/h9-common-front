@@ -13,7 +13,7 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
     boards: [] as Connection[],
 
     /**
-     * Reducer that sets the state of the connection to isConnected param.
+     * Reducer that sets the state of the websocket connection to isConnected param.
      * @param {boolean} isConnected
      */
     setWebSocketConnection: (isConnected: boolean) => {

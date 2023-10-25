@@ -13,6 +13,11 @@ interface MessagesSlice {
 export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
     messages: [] as Array<Message>,
 
+    /**
+     * Reducer that adds to messages the message resulted of processing the MessageAdapter
+     * @param {MessageAdapter} message 
+     * @returns {Array<Message>}
+     */
     addMessage: (message: MessageAdapter) => {
         
         const preparedMessage = {

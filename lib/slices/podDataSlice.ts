@@ -5,24 +5,47 @@ import {
     PodDataAdapter,
 } from "../adapters";
 import { PodData, updatePodData as updatePackets, Board } from "../models";
+import { StateCreator } from "zustand";
 
-export const podDataSlice = createSlice({
-    name: "podData",
-    initialState: {
+interface PodDataSlice {
+    podData: PodData
+    initPodData: (podDataAdapter: PodDataAdapter) => void
+    updatePodData: (newPodData: Record<number, PacketUpdate>) => void
+}
+
+export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
+    podData: {
         boards: [] as Board[],
         packetToBoard: {} as Record<number, number>,
         lastUpdates: {} as Record<string, PacketUpdate>,
-    } as PodData,
-    reducers: {
-        initPodData: (_: PodData, action: PayloadAction<PodDataAdapter>) => {
-            return createPodDataFromAdapter(action.payload);
-        },
-        updatePodData: (
-            state: PodData,
-            action: PayloadAction<Record<number, PacketUpdate>>
-        ) => {
-            state.lastUpdates = action.payload;
-            updatePackets(state, action.payload);
-        },
     },
-});
+
+    /**
+     * Reducer that initializes the state based on podDataAdapter.
+     * It uses a helper function createPodDataFromAdapter to do it.
+     * @param {PodDataAdapter} podDataAdapter 
+     */
+    initPodData: (podDataAdapter: PodDataAdapter) => {
+        set(state => ({
+            ...state,
+            podData: createPodDataFromAdapter(podDataAdapter)
+        }))
+    },
+
+    /**
+     * Reducer that updates the state based on newPodData.
+     * @param {Record<number, PacketUpdate>} newPodData 
+     */
+    updatePodData: (newPodData: Record<number, PacketUpdate>) => {
+
+        set(state => ({
+            ...state,
+            podData: {
+                ...state.podData,
+                lastUpdates: newPodData
+            }
+        }))
+
+        updatePackets(get().podData, newPodData) // TODO: CHECK THIS. IM PRETTY SURE IT DOESN'T WORKS
+    },
+})
