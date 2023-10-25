@@ -59,7 +59,7 @@ interface MeasurementsSlice {
     updateMeasurements: (measurements: Record<string, PacketUpdate>) => void
 }
 
-const measurementsSlice: StateCreator<MeasurementsSlice> = (set, get) => ({
+export const measurementsSlice: StateCreator<MeasurementsSlice> = (set, get) => ({
     measurements: {},
     packetIdToBoard: {},
 

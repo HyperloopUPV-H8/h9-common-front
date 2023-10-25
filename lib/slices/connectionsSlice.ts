@@ -8,7 +8,7 @@ interface ConnectionsSlice {
     setBoardConnections: (connections: Array<Connection>) => void;
 }
 
-const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
+export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
     websocket: { name: "Backend WebSocket", isConnected: false },
     boards: [] as Connection[],
 

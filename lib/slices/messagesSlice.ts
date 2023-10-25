@@ -11,7 +11,7 @@ interface MessagesSlice {
     clearMessages: () => void
 }
 
-const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
+export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
     messages: [] as Array<Message>,
 
     addMessage: (message: MessageAdapter) => {
