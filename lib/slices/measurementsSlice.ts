@@ -1,5 +1,4 @@
 import { Measurement } from "../models";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
     getBooleanMeasurement,
     getEnumMeasurement,
@@ -14,43 +13,6 @@ export type Measurements = {
     measurements: Record<string, Measurement>;
     packetIdToBoard: Record<number, string>;
 };
-
-export const measurementsSliceRedux = createSlice({
-    name: "measurements",
-    initialState: { measurements: {}, packetIdToBoard: {} } as Measurements,
-    reducers: {
-        initMeasurements: (
-            _: Measurements,
-            action: PayloadAction<PodDataAdapter>
-        ) => {
-            return {
-                measurements: createMeasurementsFromPodDataAdapter(
-                    action.payload
-                ),
-                packetIdToBoard: getPacketIdToBoard(action.payload),
-            };
-        },
-        updateMeasurements: (
-            state: Measurements,
-            action: PayloadAction<Record<string, PacketUpdate>>
-        ) => {
-            for (const update of Object.values(action.payload)) {
-                for (const [id, mUpdate] of Object.entries(
-                    update.measurementUpdates
-                )) {
-                    const boardName = state.packetIdToBoard[update.id];
-
-                    if (!boardName) {
-                        continue;
-                    }
-
-                    const measId = `${boardName}/${id}`;
-                    state.measurements[measId].value = mUpdate;
-                }
-            }
-        },
-    },
-});
 
 interface MeasurementsSlice {
     measurements: Record<string, Measurement>;

@@ -1,4 +1,3 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
 import { isEqual } from "lodash";
 import { MessageAdapter } from "../adapters";
