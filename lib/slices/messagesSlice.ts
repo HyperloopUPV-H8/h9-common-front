@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { isEqual } from "lodash";
 import { MessageAdapter } from "../adapters";
 import { Message } from "../models";
-import { StateCreator } from "zustand";
+import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
 interface MessagesSlice {
     messages: Array<Message>
@@ -10,7 +10,7 @@ interface MessagesSlice {
     clearMessages: () => void
 }
 
-export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
+export const messagesSlice: UseBoundStore<StoreApi<MessagesSlice>> = create((set, get) => ({
     messages: [] as Array<Message>,
 
     /**
@@ -54,7 +54,7 @@ export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
             messages: []
         }))
     }
-})
+}))
 
 function areMessagesEqual(message: Message, adapter: MessageAdapter): boolean {
     //TODO: this could break easily, i'm not covering the case where they are not the same kind

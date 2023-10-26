@@ -5,7 +5,7 @@ import {
     PodDataAdapter,
 } from "../adapters";
 import { PodData, updatePodData as updatePackets, Board } from "../models";
-import { StateCreator } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 interface PodDataSlice {
     podData: PodData
@@ -13,7 +13,7 @@ interface PodDataSlice {
     updatePodData: (newPodData: Record<number, PacketUpdate>) => void
 }
 
-export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
+export const podDataSlice: UseBoundStore<StoreApi<PodDataSlice>> = create((set, get) => ({
     podData: {
         boards: [] as Board[],
         packetToBoard: {} as Record<number, number>,
@@ -48,4 +48,4 @@ export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
 
         updatePackets(get().podData, newPodData) // TODO: CHECK THIS. IM PRETTY SURE IT DOESN'T WORKS
     },
-})
+}))
