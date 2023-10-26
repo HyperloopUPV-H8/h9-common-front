@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useSubscribe } from "../..";
-import { connectionsSlice } from "../../slices/connectionsSlice";
+import { connectionsSlice } from "../../store/connectionsSlice";
 import { useStore } from "zustand";
 
 export function useConnections() {

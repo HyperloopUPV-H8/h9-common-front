@@ -7,13 +7,13 @@ import {
 import { PodData, updatePodData as updatePackets, Board } from "../models";
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
-interface PodDataSlice {
+export interface PodDataSlice {
     podData: PodData
     initPodData: (podDataAdapter: PodDataAdapter) => void
     updatePodData: (newPodData: Record<number, PacketUpdate>) => void
 }
 
-export const podDataSlice: UseBoundStore<StoreApi<PodDataSlice>> = create((set, get) => ({
+export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
     podData: {
         boards: [] as Board[],
         packetToBoard: {} as Record<number, number>,
@@ -46,6 +46,6 @@ export const podDataSlice: UseBoundStore<StoreApi<PodDataSlice>> = create((set, 
             }
         }))
 
-        updatePackets(get().podData, newPodData) // TODO: CHECK THIS. IM PRETTY SURE IT DOESN'T WORKS
+        updatePackets(get().podData, newPodData) // TODO: CHECK THIS. IM PRETTY SURE IT DOESN'T WORK
     },
-}))
+})

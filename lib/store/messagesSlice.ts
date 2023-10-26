@@ -4,13 +4,13 @@ import { MessageAdapter } from "../adapters";
 import { Message } from "../models";
 import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
-interface MessagesSlice {
+export interface MessagesSlice {
     messages: Array<Message>
     addMessage: (message: MessageAdapter) => Array<Message>
     clearMessages: () => void
 }
 
-export const messagesSlice: UseBoundStore<StoreApi<MessagesSlice>> = create((set, get) => ({
+export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
     messages: [] as Array<Message>,
 
     /**
@@ -54,7 +54,7 @@ export const messagesSlice: UseBoundStore<StoreApi<MessagesSlice>> = create((set
             messages: []
         }))
     }
-}))
+})
 
 function areMessagesEqual(message: Message, adapter: MessageAdapter): boolean {
     //TODO: this could break easily, i'm not covering the case where they are not the same kind

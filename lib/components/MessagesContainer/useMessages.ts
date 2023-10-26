@@ -1,4 +1,4 @@
-import { messageSlice } from "../../slices/messagesSlice";
+import { messageSlice } from "../../store/messagesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Message, MessageAdapter, useSubscribe } from "../..";
 

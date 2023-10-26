@@ -14,14 +14,14 @@ export type Measurements = {
     packetIdToBoard: Record<number, string>;
 };
 
-interface MeasurementsSlice {
+export interface MeasurementsSlice {
     measurements: Record<string, Measurement>;
     packetIdToBoard: Record<number, string>;
     initMeasurements: (podDataAdapter: PodDataAdapter) => Measurements;
     updateMeasurements: (measurements: Record<string, PacketUpdate>) => void
 }
 
-export const measurementsSlice: UseBoundStore<StoreApi<MeasurementsSlice>> = create((set, get) => ({
+export const measurementsSlice: StateCreator<MeasurementsSlice> = (set, get) => ({
     measurements: {},
     packetIdToBoard: {},
 
@@ -74,7 +74,7 @@ export const measurementsSlice: UseBoundStore<StoreApi<MeasurementsSlice>> = cre
             }
         }
     }
-}))
+})
 
 function createMeasurementsFromPodDataAdapter(
     podDataAdapter: PodDataAdapter

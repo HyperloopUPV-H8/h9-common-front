@@ -1,13 +1,13 @@
 import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 import { BoardOrders, StateOrdersUpdate, VehicleOrders } from "..";
 
-interface OrdersSlice {
+export interface OrdersSlice {
     vehicleOrders: VehicleOrders
     setOrders: (vehicleOrders: VehicleOrders) => void
     updateStateOrders: (stateOrdersUpdate: StateOrdersUpdate) => void
 }
 
-export const ordersSlice: UseBoundStore<StoreApi<OrdersSlice>> = create((set, get) => ({
+export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
     vehicleOrders: { boards: [] },
 
     /**
@@ -52,4 +52,4 @@ export const ordersSlice: UseBoundStore<StoreApi<OrdersSlice>> = create((set, ge
             } as OrdersSlice))
         })
     },
-}))
+})
