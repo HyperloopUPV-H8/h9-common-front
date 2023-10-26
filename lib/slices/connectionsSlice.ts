@@ -1,16 +1,20 @@
 import { Connection } from "..";
-import { StateCreator } from "zustand";
+import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
 interface ConnectionsSlice {
-    websocket: Connection;
-    boards: Connection[];
+    connections: {
+        websocket: Connection;
+        boards: Connection[];
+    }
     setWebSocketConnection: (isConnected: boolean) => void;
     setBoardConnections: (connections: Array<Connection>) => void;
 }
 
-export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
-    websocket: { name: "Backend WebSocket", isConnected: false },
-    boards: [] as Connection[],
+export const connectionsSlice: UseBoundStore<StoreApi<ConnectionsSlice>> = create((set, get) => ({
+    connections: {
+        websocket: { name: "Backend WebSocket", isConnected: false },
+        boards: [] as Connection[],
+    },
 
     /**
      * Reducer that sets the state of the websocket connection to isConnected param.
@@ -19,20 +23,28 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
     setWebSocketConnection: (isConnected: boolean) => {
         if(!isConnected) {
             set(state => ({
-                websocket: {
-                    ...state.websocket,
-                    isConnected: false
-                },
-                boards: state.boards.map(board => ({
-                    ...board,
-                    isConnected: false
-                }))
+                ...state,
+                connections: {
+                    ...state.connections,
+                    websocket: {
+                        ...state.connections.websocket,
+                        isConnected: false
+                    },
+                    boards: state.connections.boards.map(board => ({
+                        ...board,
+                        isConnected: false
+                    }))
+                }
             }))
         } else {
             set(state => ({
-                websocket: {
-                    ...state.websocket,
-                    isConnected: true
+                ...state,
+                connections: {
+                    ...state.connections,
+                    websocket: {
+                        ...state.connections.websocket,
+                        isConnected: true
+                    }
                 }
             }))
         }
@@ -46,7 +58,7 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
      */
     setBoardConnections: (connections: Array<Connection>) => { 
         let finalBoards = [] as Connection[]
-        let stateBoards = get().boards;
+        let stateBoards = get().connections.boards;
         connections.forEach(connection => {
             const result = stateBoards.find(board => board.name == connection.name) //TODO: CHECK IF IT WORKS WITH FIND
             if(result) {
@@ -63,4 +75,4 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
             boards: finalBoards
         }))
     }
-})
+}))
