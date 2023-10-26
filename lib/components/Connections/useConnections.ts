@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useSubscribe } from "../..";
-import { connectionsSlice } from "../../store/connectionsSlice";
-import { useStore } from "zustand";
+import { useStore } from "../../store/store";
 
 export function useConnections() {
     
-    const {setBoardConnections, connections} = connectionsSlice()
+    const setBoardConnections = useStore(state => state.setBoardConnections);
+    const connections = useStore(state => state.connections);
 
     useSubscribe("connection/update", (update) => {
         setBoardConnections(update)

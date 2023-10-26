@@ -1,13 +1,15 @@
-import { messageSlice } from "../../store/messagesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Message, MessageAdapter, useSubscribe } from "../..";
+import { useStore } from "../../store/store";
 
 export function useMessages() {
-    const dispatch = useDispatch();
+    
+    const addMessage = useStore((state) => state.addMessage);
+    const messages = useStore((state) => state.messages);
 
     useSubscribe("message/update", (msg: MessageAdapter) => {
-        dispatch(messageSlice.actions.addMessage(msg));
+        addMessage(msg);
     });
 
-    return useSelector((state: { messages: Message[] }) => state.messages);
+    return messages;
 }

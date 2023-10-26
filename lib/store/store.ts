@@ -7,7 +7,7 @@ import { connectionsSlice, ConnectionsSlice,
 
 type Store = ConnectionsSlice & MessagesSlice & MeasurementsSlice & OrdersSlice & PodDataSlice;
 
-const store = create<Store>((...a) => ({
+export const useStore = create<Store>((...a) => ({
     ...connectionsSlice(...a),
     ...messagesSlice(...a),
     ...measurementsSlice(...a),
