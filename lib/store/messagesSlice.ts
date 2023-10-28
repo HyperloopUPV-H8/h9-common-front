@@ -6,7 +6,7 @@ import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
 export interface MessagesSlice {
     messages: Array<Message>
-    addMessage: (message: MessageAdapter) => Array<Message>
+    addMessage: (message: MessageAdapter) => void
     clearMessages: () => void
 }
 
@@ -44,8 +44,6 @@ export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
                 messages: [...state.messages, preparedMessage] as Array<Message>
             }))
         }
-
-        return [...get().messages, preparedMessage]
     },
 
     clearMessages: () => {
