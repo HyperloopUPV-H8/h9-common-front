@@ -5,7 +5,7 @@ import { useStore } from "../../store/store";
 
 export function useConnections() {
     
-    const setBoardConnections = useStore(state => state.setBoardConnections);
+    const setBoardConnections = useStore(state => state.setConnections);
     const connections = useStore(state => state.connections);
 
     useSubscribe("connection/update", (update) => {

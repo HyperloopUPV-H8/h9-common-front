@@ -3,16 +3,16 @@ import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
 export interface ConnectionsSlice {
     connections: {
-        websocket: Connection;
+        backend: Connection;
         boards: Connection[];
     }
     setWebSocketConnection: (isConnected: boolean) => void;
-    setBoardConnections: (connections: Array<Connection>) => void;
+    setConnections: (connections: Array<Connection>) => void;
 }
 
 export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
     connections: {
-        websocket: { name: "Backend WebSocket", isConnected: false },
+        backend: { name: "Backend WebSocket", isConnected: false },
         boards: [] as Connection[],
     },
 
@@ -21,33 +21,20 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
      * @param {boolean} isConnected
      */
     setWebSocketConnection: (isConnected: boolean) => {
-        if(!isConnected) {
-            set(state => ({
-                ...state,
-                connections: {
-                    ...state.connections,
-                    websocket: {
-                        ...state.connections.websocket,
-                        isConnected: false
-                    },
-                    boards: state.connections.boards.map(board => ({
-                        ...board,
-                        isConnected: false
-                    }))
-                }
-            }))
-        } else {
-            set(state => ({
-                ...state,
-                connections: {
-                    ...state.connections,
-                    websocket: {
-                        ...state.connections.websocket,
-                        isConnected: true
-                    }
-                }
-            }))
-        }
+        set(state => ({
+            ...state,
+            connections: {
+                ...state.connections,
+                websocket: {
+                    ...state.connections.backend,
+                    isConnected: isConnected
+                },
+                boards: state.connections.boards.map(board => ({
+                    ...board,
+                    isConnected: isConnected && board.isConnected
+                }))
+            }
+        }))
     },
 
     /**
@@ -56,7 +43,7 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
      * If one doesn't exist, push it to boards.
      * @param {Array<Connection>} connections 
      */
-    setBoardConnections: (connections: Array<Connection>) => { 
+    setConnections: (connections: Array<Connection>) => { 
         let finalBoards = [] as Connection[]
         let stateBoards = get().connections.boards;
         connections.forEach(connection => {
