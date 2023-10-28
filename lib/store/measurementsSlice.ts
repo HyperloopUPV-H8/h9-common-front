@@ -17,7 +17,7 @@ export type Measurements = {
 export interface MeasurementsSlice {
     measurements: Record<string, Measurement>;
     packetIdToBoard: Record<number, string>;
-    initMeasurements: (podDataAdapter: PodDataAdapter) => Measurements;
+    initMeasurements: (podDataAdapter: PodDataAdapter) => void;
     updateMeasurements: (measurements: Record<string, PacketUpdate>) => void
 }
 
@@ -42,8 +42,6 @@ export const measurementsSlice: StateCreator<MeasurementsSlice> = (set, get) => 
             ...state,
             ...measurements
         }))
-
-        return measurements
     },
 
     /**
