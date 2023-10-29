@@ -8,7 +8,7 @@ export interface OrdersSlice {
 }
 
 export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
-    vehicleOrders: { boards: [] },
+    vehicleOrders: { boards: [] as BoardOrders[] },
 
     /**
      * Reducer that sets the vehicleOrders to the vehicleOrders param
