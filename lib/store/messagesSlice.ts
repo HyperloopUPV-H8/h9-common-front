@@ -26,24 +26,16 @@ export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
             ...message
         } as Message
 
-        if(get().messages.length > 0 && areMessagesEqual(get().messages[get().messages.length - 1], preparedMessage)) {
-            set(state => ({
-                ...state,
-                messages: [
-                    ...state.messages.slice(0, state.messages.length - 1),
-                    {
-                        ...state.messages[state.messages.length - 1],
-                        id: preparedMessage.id,
-                        count: state.messages[state.messages.length - 1].count + 1
-                    }
-                ]
-            }))
-        } else {
-            set(state => ({
-                ...state,
-                messages: [...state.messages, preparedMessage] as Array<Message>
-            }))
-        }
+        const stateMessages = get().messages;
+        const lastMessage = stateMessages[stateMessages.length - 1];
+
+        const resultMessagesState = updateMessagesArray(stateMessages, preparedMessage, lastMessage);
+
+        set(state => ({
+            ...state,
+            messages: resultMessagesState
+        }))
+
     },
 
     clearMessages: () => {
@@ -64,4 +56,19 @@ function areMessagesEqual(message: Message, adapter: MessageAdapter): boolean {
     }
 
     return false;
+}
+
+function updateMessagesArray(stateMessages: Message[], preparedMessage: Message, lastMessage: Message): any {
+    if(stateMessages.length > 0 && areMessagesEqual(lastMessage, preparedMessage)) {
+        return [
+            ...stateMessages.slice(0, stateMessages.length - 1),
+            {
+                ...lastMessage,
+                id: preparedMessage.id,
+                count: lastMessage.count + 1
+            }
+        ]
+    } else {
+        return [...stateMessages, preparedMessage] as Array<Message>
+    }
 }
