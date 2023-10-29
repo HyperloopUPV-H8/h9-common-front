@@ -6,7 +6,7 @@ export interface ConnectionsSlice {
         backend: Connection;
         boards: Connection[];
     }
-    setWebSocketConnection: (isConnected: boolean) => void;
+    setBackendConnection: (isConnected: boolean) => void;
     setConnections: (connections: Array<Connection>) => void;
 }
 
@@ -20,12 +20,12 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
      * Reducer that sets the state of the websocket connection to isConnected param.
      * @param {boolean} isConnected
      */
-    setWebSocketConnection: (isConnected: boolean) => {
+    setBackendConnection: (isConnected: boolean) => {
         set(state => ({
             ...state,
             connections: {
                 ...state.connections,
-                websocket: {
+                backend: {
                     ...state.connections.backend,
                     isConnected: isConnected
                 },
