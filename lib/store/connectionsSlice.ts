@@ -1,5 +1,5 @@
 import { Connection } from "..";
-import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
+import { StateCreator } from "zustand";
 
 export interface ConnectionsSlice {
     connections: {
@@ -38,28 +38,14 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
     },
 
     /**
-     * Reducer that sets the boards in the state to connections param.
-     * Check if each connection already exists in boards. If so, update them.
-     * If one doesn't exist, push it to boards.
+     * Update the board connections in the state.
+     * When a board connection state changes, it updates all the connections.
      * @param {Array<Connection>} connections 
      */
-    setConnections: (connections: Array<Connection>) => { 
-        let finalBoards = [] as Connection[]
-        let stateBoards = get().connections.boards;
-        connections.forEach(connection => {
-            const result = stateBoards.find(board => board.name == connection.name) //TODO: CHECK IF IT WORKS WITH FIND
-            if(result) {
-                finalBoards.push({
-                    ...result,
-                    isConnected: connection.isConnected
-                })
-            } else {
-                finalBoards.push(connection)
-            }
-        })
+    setConnections: (connections: Array<Connection>) => {
         set(state => ({
             ...state,
-            boards: finalBoards
+            boards: connections
         }))
     }
 })
