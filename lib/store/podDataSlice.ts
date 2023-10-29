@@ -3,8 +3,11 @@ import {
     createPodDataFromAdapter,
     PacketUpdate,
     PodDataAdapter,
+    getPacketToBoard,
+    getMeasurementToPacket,
+    getPackets
 } from "../adapters";
-import { PodData, updatePodData as updatePackets, Board } from "../models";
+import { PodData, updatePacket, Board, Packet } from "../models";
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 export interface PodDataSlice {
@@ -26,9 +29,29 @@ export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
      * @param {PodDataAdapter} podDataAdapter 
      */
     initPodData: (podDataAdapter: PodDataAdapter) => {
+
+        const boards: Board[] = Object.values(podDataAdapter.boards).map(
+            (boardAdapter) => {
+                const packets = getPackets(boardAdapter.name, boardAdapter.packets);
+                const measurementToPacket = getMeasurementToPacket(
+                    boardAdapter.packets
+                );
+    
+                return {
+                    name: boardAdapter.name,
+                    packets,
+                    measurementToPacket,
+                };
+            }
+        );
+    
+        const packetToBoard = getPacketToBoard(podDataAdapter.boards);
+    
+        const podDataResult = { boards, packetToBoard, lastUpdates: {} };
+
         set(state => ({
             ...state,
-            podData: createPodDataFromAdapter(podDataAdapter)
+            podData: podDataResult
         }))
     },
 
@@ -46,6 +69,47 @@ export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
             }
         }))
 
-        updatePackets(get().podData, newPodData) // TODO: CHECK THIS. IM PRETTY SURE IT DOESN'T WORK
+        updatePodData(get().podData, newPodData) // TODO: FIX THIS FUNCTION
     },
 })
+
+
+export function updatePodData(
+    podData: PodData,
+    packetUpdates: { [id: number]: PacketUpdate }
+) {
+    for (const update of Object.values(packetUpdates)) {
+        const packet = getPacket(podData, update.id);
+        if (packet) {
+            const boardIndex = podData.packetToBoard[update.id];
+
+            if (boardIndex === undefined) {
+                console.warn(
+                    `packet with id ${update.id} not found in packetToBoard`
+                );
+                continue;
+            }
+
+            const board = podData.boards[boardIndex];
+
+            if (!board) {
+                console.warn(`board with index ${boardIndex} not found`);
+                continue;
+            }
+
+            updatePacket(board.name, packet, update);
+        } else {
+            console.warn(`packet with id ${update.id} not found`);
+        }
+    }
+}
+
+export function getPacket(podData: PodData, id: number): Packet | undefined {
+    const board = podData.boards[podData.packetToBoard[id]];
+
+    if (board) {
+        return board.packets.find((item) => item.id == id);
+    }
+
+    return undefined;
+}
