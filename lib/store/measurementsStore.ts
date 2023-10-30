@@ -7,15 +7,12 @@ import {
     PodDataAdapter,
     PacketUpdate,
 } from "../adapters";
-import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
+import { create } from "zustand";
 
-export type Measurements = {
-    measurements: Record<string, Measurement>;
-    packetIdToBoard: Record<number, string>;
-};
+export type Measurements = Record<string, Measurement>
 
 export interface MeasurementsStore {
-    measurements: Record<string, Measurement>;
+    measurements: Measurements;
     packetIdToBoard: Record<number, string>;
     initMeasurements: (podDataAdapter: PodDataAdapter) => void;
     updateMeasurements: (measurements: Record<string, PacketUpdate>) => void
@@ -33,14 +30,10 @@ export const useMeasurementsStore = create<MeasurementsStore>((set, get) => ({
      */
     initMeasurements: (podDataAdapter: PodDataAdapter) => {
 
-        const measurements: Measurements = {
-            measurements: createMeasurementsFromPodDataAdapter(podDataAdapter),
-            packetIdToBoard: getPacketIdToBoard(podDataAdapter),
-        }
-
         set(state => ({
             ...state,
-            ...measurements
+            measurements: createMeasurementsFromPodDataAdapter(podDataAdapter),
+            packetIdToBoard: getPacketIdToBoard(podDataAdapter),
         }))
     },
 
@@ -76,7 +69,7 @@ export const useMeasurementsStore = create<MeasurementsStore>((set, get) => ({
 
 function createMeasurementsFromPodDataAdapter(
     podDataAdapter: PodDataAdapter
-): Record<string, Measurement> {
+): Measurements {
     const measurements: Record<string, Measurement> = {};
 
     for (const board of Object.values(podDataAdapter.boards)) {
@@ -113,7 +106,7 @@ export function getMeasurement(
     measurements: Measurements,
     id: string
 ): Measurement | undefined {
-    const meas = measurements.measurements[id];
+    const meas = measurements[id];
 
     if (!meas) {
         console.trace(`measurement ${id} not found in store`);

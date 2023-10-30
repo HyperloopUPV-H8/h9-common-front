@@ -12,11 +12,11 @@ import {
     isNumberValid,
     isWithinRange,
 } from "../../numberValidation";
-import { useStore } from "../../store/store";
+import { useOrdersStore } from "../..";
 
 export function useOrders() {
-    const updateStateOrders = useStore((state) => state.updateStateOrders);
-    const ordersBoards = useStore((state) => state.vehicleOrders.boards);
+    const updateStateOrders = useOrdersStore((state) => state.updateStateOrders);
+    const ordersBoards = useOrdersStore((state) => state.vehicleOrders.boards);
 
     useSubscribe("order/stateOrders", (msg) => {
         updateStateOrders(msg);

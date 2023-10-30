@@ -1,10 +1,7 @@
-import { clear } from "console";
-import { Button, Message } from "../../..";
-import { useStore } from "../../../store/store";
+import { Button, Message, useMessagesStore } from "../../..";
 import styles from "./Messages.module.scss";
 import { MessageView } from "./MessageView/MessageView";
 import { useAutoScroll } from "./useAutoScroll";
-import { useDispatch } from "react-redux";
 
 type Props = {
     messages: Message[];
@@ -13,7 +10,7 @@ type Props = {
 export const Messages = ({ messages }: Props) => {
     const { ref, handleScroll } = useAutoScroll(messages);
     
-    const clearMessages = useStore((state) => state.clearMessages);
+    const clearMessages = useMessagesStore((state) => state.clearMessages);
 
     return (
         <section className={styles.messagesWrapper}>
