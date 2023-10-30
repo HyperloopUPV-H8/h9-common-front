@@ -1,13 +1,13 @@
 import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 import { BoardOrders, StateOrdersUpdate, VehicleOrders } from "..";
 
-export interface OrdersSlice {
+export interface OrdersStore {
     vehicleOrders: VehicleOrders
     setOrders: (vehicleOrders: VehicleOrders) => void
     updateStateOrders: (stateOrdersUpdate: StateOrdersUpdate) => void
 }
 
-export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
+export const useOrdersStore= create<OrdersStore>((set, get) => ({
     vehicleOrders: { boards: [] as BoardOrders[] },
 
     /**
@@ -49,7 +49,7 @@ export const ordersSlice: StateCreator<OrdersSlice> = (set, get) => ({
                         }
                     }
                 }
-            } as OrdersSlice))
+            } as OrdersStore))
         })
     },
-})
+}))

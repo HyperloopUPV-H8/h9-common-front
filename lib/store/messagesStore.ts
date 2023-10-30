@@ -4,13 +4,13 @@ import { MessageAdapter } from "../adapters";
 import { Message } from "../models";
 import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
-export interface MessagesSlice {
+export interface MessagesStore {
     messages: Array<Message>
     addMessage: (message: MessageAdapter) => void
     clearMessages: () => void
 }
 
-export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
+export const useMessagesStore = create<MessagesStore>((set, get) => ({
     messages: [] as Array<Message>,
 
     /**
@@ -44,7 +44,7 @@ export const messagesSlice: StateCreator<MessagesSlice> = (set, get) => ({
             messages: []
         }))
     }
-})
+}))
 
 function areMessagesEqual(message: Message, adapter: MessageAdapter): boolean {
     if (

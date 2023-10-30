@@ -10,13 +10,13 @@ import {
 import { PodData, updatePacket, Board, Packet } from "../models";
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
-export interface PodDataSlice {
+export interface PodDataStore {
     podData: PodData
     initPodData: (podDataAdapter: PodDataAdapter) => void
     updatePodData: (newPodData: Record<number, PacketUpdate>) => void
 }
 
-export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
+export const usePodDataStore = create<PodDataStore>((set, get) => ({
     podData: {
         boards: [] as Board[],
         packetToBoard: {} as Record<number, number>,
@@ -71,7 +71,7 @@ export const podDataSlice: StateCreator<PodDataSlice> = (set, get) => ({
 
         updatePodData(get().podData, newPodData) // TODO: FIX THIS FUNCTION
     },
-})
+}))
 
 
 export function updatePodData(

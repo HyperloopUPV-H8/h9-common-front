@@ -1,7 +1,7 @@
 import { Connection } from "..";
-import { StateCreator } from "zustand";
+import { StateCreator, StoreApi, create } from "zustand";
 
-export interface ConnectionsSlice {
+export interface ConnectionsStore {
     connections: {
         backend: Connection;
         boards: Connection[];
@@ -10,7 +10,7 @@ export interface ConnectionsSlice {
     setConnections: (connections: Array<Connection>) => void;
 }
 
-export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
+export const useConnectionsStore = create<ConnectionsStore>((set) => ({
     connections: {
         backend: { name: "Backend WebSocket", isConnected: false },
         boards: [] as Connection[],
@@ -48,4 +48,4 @@ export const connectionsSlice: StateCreator<ConnectionsSlice> = (set, get) => ({
             boards: connections
         }))
     }
-})
+}))
