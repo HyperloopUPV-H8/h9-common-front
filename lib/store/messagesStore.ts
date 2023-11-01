@@ -5,18 +5,18 @@ import { Message } from "../models";
 import { StateCreator, StoreApi, UseBoundStore, create } from "zustand";
 
 export interface MessagesStore {
-    messages: Array<Message>
+    messages: Message[]
     addMessage: (message: MessageAdapter) => void
     clearMessages: () => void
 }
 
 export const useMessagesStore = create<MessagesStore>((set, get) => ({
-    messages: [] as Array<Message>,
+    messages: [] as Message[],
 
     /**
      * Reducer that adds to messages the message resulted of processing the MessageAdapter
      * @param {MessageAdapter} message 
-     * @returns {Array<Message>}
+     * @returns {Message[]}
      */
     addMessage: (message: MessageAdapter) => {
         
@@ -58,7 +58,7 @@ function areMessagesEqual(message: Message, adapter: MessageAdapter): boolean {
     return false;
 }
 
-function updateMessagesArray(stateMessages: Message[], preparedMessage: Message, lastMessage: Message): any {
+function updateMessagesArray(stateMessages: Message[], preparedMessage: Message, lastMessage: Message): Message[] {
     if(stateMessages.length > 0 && areMessagesEqual(lastMessage, preparedMessage)) {
         return [
             ...stateMessages.slice(0, stateMessages.length - 1),
@@ -67,8 +67,8 @@ function updateMessagesArray(stateMessages: Message[], preparedMessage: Message,
                 id: preparedMessage.id,
                 count: lastMessage.count + 1
             }
-        ]
+        ] as Message[]
     } else {
-        return [...stateMessages, preparedMessage] as Array<Message>
+        return [...stateMessages, preparedMessage] as Message[]
     }
 }

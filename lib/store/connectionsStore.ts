@@ -7,7 +7,7 @@ export interface ConnectionsStore {
         boards: Connection[];
     }
     setBackendConnection: (isConnected: boolean) => void;
-    setConnections: (connections: Array<Connection>) => void;
+    setConnections: (connections: Connection[]) => void;
 }
 
 export const useConnectionsStore = create<ConnectionsStore>((set) => ({
@@ -40,9 +40,9 @@ export const useConnectionsStore = create<ConnectionsStore>((set) => ({
     /**
      * Update the board connections in the state.
      * When a board connection state changes, it updates all the connections.
-     * @param {Array<Connection>} connections 
+     * @param {Connection[]} connections 
      */
-    setConnections: (connections: Array<Connection>) => {
+    setConnections: (connections: Connection[]) => {
         set(state => ({
             ...state,
             boards: connections
