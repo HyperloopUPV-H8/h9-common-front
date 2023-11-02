@@ -61,6 +61,47 @@ export const usePodDataStore = create<PodDataStore>((set, get) => ({
      */
     updatePodData: (newPodData: Record<number, PacketUpdate>) => {
 
+        const podData = get().podData;
+
+        for (const update of Object.values(newPodData)) {
+            const packet = getPacket(podData, update.id);
+            if (packet) {
+                const boardIndex = podData.packetToBoard[update.id];
+    
+                if (!boardIndex) {
+                    console.warn(`packet with id ${update.id} not found in packetToBoard`);
+                    continue;
+                }
+    
+                const board = podData.boards[boardIndex];
+    
+                if (!board) {
+                    console.warn(`board with index ${boardIndex} not found`);
+                    continue;
+                }
+
+                const packetIndexInBoard = board.packets.findIndex(p => p.id == packet.id)
+
+                const updatedBoard = {...board}
+                updatedBoard.packets[packetIndexInBoard] = updatePacket(board.name, packet, update)
+
+                const updatedBoards = [...podData.boards]
+                updatedBoards[boardIndex] = updatedBoard
+
+                set(state => ({
+                    ...state,
+                    podData: {
+                        ...state.podData,
+                        boards: updatedBoards
+                    }
+                }))
+                
+            } else {
+                console.warn(`packet with id ${update.id} not found`);
+            }
+
+        }
+
         set(state => ({
             ...state,
             podData: {
@@ -68,41 +109,8 @@ export const usePodDataStore = create<PodDataStore>((set, get) => ({
                 lastUpdates: newPodData
             }
         }))
-
-        updatePodData(get().podData, newPodData) // TODO: FIX THIS FUNCTION
     },
 }))
-
-
-export function updatePodData(
-    podData: PodData,
-    packetUpdates: { [id: number]: PacketUpdate }
-) {
-    for (const update of Object.values(packetUpdates)) {
-        const packet = getPacket(podData, update.id);
-        if (packet) {
-            const boardIndex = podData.packetToBoard[update.id];
-
-            if (boardIndex === undefined) {
-                console.warn(
-                    `packet with id ${update.id} not found in packetToBoard`
-                );
-                continue;
-            }
-
-            const board = podData.boards[boardIndex];
-
-            if (!board) {
-                console.warn(`board with index ${boardIndex} not found`);
-                continue;
-            }
-
-            updatePacket(board.name, packet, update);
-        } else {
-            console.warn(`packet with id ${update.id} not found`);
-        }
-    }
-}
 
 export function getPacket(podData: PodData, id: number): Packet | undefined {
     const board = podData.boards[podData.packetToBoard[id]];
