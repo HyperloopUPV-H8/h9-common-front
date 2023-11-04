@@ -13,7 +13,7 @@ import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 export interface PodDataStore {
     podData: PodData
     initPodData: (podDataAdapter: PodDataAdapter) => void
-    updatePodData: (newPodData: Record<number, PacketUpdate>) => void
+    updatePodData: (packetUpdates: Record<number, PacketUpdate>) => void
 }
 
 export const usePodDataStore = create<PodDataStore>((set, get) => ({
@@ -56,14 +56,14 @@ export const usePodDataStore = create<PodDataStore>((set, get) => ({
     },
 
     /**
-     * Reducer that updates the state based on newPodData.
-     * @param {Record<number, PacketUpdate>} newPodData 
+     * Reducer that updates the state based on packetUpdates.
+     * @param {Record<number, PacketUpdate>} packetUpdates 
      */
-    updatePodData: (newPodData: Record<number, PacketUpdate>) => {
-
+    updatePodData: (packetUpdates: Record<number, PacketUpdate>) => {
+2
         const podData = get().podData;
 
-        for (const update of Object.values(newPodData)) {
+        for (const update of Object.values(packetUpdates)) {
             const packet = getPacket(podData, update.id);
             if (packet) {
                 const boardIndex = podData.packetToBoard[update.id];
@@ -106,7 +106,7 @@ export const usePodDataStore = create<PodDataStore>((set, get) => ({
             ...state,
             podData: {
                 ...state.podData,
-                lastUpdates: newPodData
+                lastUpdates: packetUpdates
             }
         }))
     },
